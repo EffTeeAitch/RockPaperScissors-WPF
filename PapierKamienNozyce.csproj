@@ -9,21 +9,21 @@
   <ItemGroup>
     <None Remove="Image\computer.png" />
     <None Remove="Image\paper.png" />
-    <None Remove="Image\rock.jpg" />
-    <None Remove="Image\scissors.jpg" />
+    <None Remove="Image\rock.png" />
+    <None Remove="Image\scissors.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Image\computer.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Image\rock.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Image\scissors.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Image\paper.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Image\rock.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Image\scissors.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

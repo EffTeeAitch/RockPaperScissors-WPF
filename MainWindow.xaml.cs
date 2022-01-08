@@ -38,7 +38,7 @@ namespace PapierKamienNozyce
         public void play_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            if (isGameStarted == false || button.Content.ToString() == "Zagraj" || button.Content.ToString() == "Sprawdz")
+            if (isGameStarted == false && (button.Content.ToString() == "Let's play" || button.Content.ToString() == "Check the name"))
             {
                 isGameStarted = true;
                 if (game.AfterClick(sender, e))
@@ -48,15 +48,13 @@ namespace PapierKamienNozyce
             }
             else
             {
-                MessageBox.Show("Gra nie moze byc wlaczana");
+                MessageBox.Show("Game can not be turned on. Sorry");
             }
-            
         }
         public void endClick(object sender, RoutedEventArgs e)
         {
             game.EndGame(sender, e);
         }        
-
     }
 
 
@@ -117,9 +115,9 @@ namespace PapierKamienNozyce
         {
             Image paper = new Image();
             paper.Name = "paper";
-            paper.Width = 100;
-            paper.Height = 100;
-            paper.Margin = new Thickness(150, 119, 0, 0);
+            paper.Width = 150;
+            paper.Height = 150;
+            paper.Margin = new Thickness(74, 119, 0, 0);
             paper.HorizontalAlignment = HorizontalAlignment.Left;
             paper.VerticalAlignment = VerticalAlignment.Top;
             paper.Source = new BitmapImage(new Uri(@"/Image/paper.png", UriKind.Relative));
@@ -132,29 +130,28 @@ namespace PapierKamienNozyce
             rock.Margin = new Thickness(333, 119, 0, 0);
             rock.HorizontalAlignment = HorizontalAlignment.Left;
             rock.VerticalAlignment = VerticalAlignment.Top;
-            rock.Source = new BitmapImage(new Uri(@"/Image/rock.jpg", UriKind.Relative));
+            rock.Source = new BitmapImage(new Uri(@"/Image/rock.png", UriKind.Relative));
             rock.MouseDown += new MouseButtonEventHandler(Processes);
 
             Image scissors = new Image();
             scissors.Name = "scissors";
-            scissors.Width = 100;
-            scissors.Height = 100;
+            scissors.Width = 150;
+            scissors.Height = 150;
             scissors.Margin = new Thickness(592, 119, 0, 0);
             scissors.HorizontalAlignment = HorizontalAlignment.Left;
             scissors.VerticalAlignment = VerticalAlignment.Top;
-            scissors.Source = new BitmapImage(new Uri(@"/Image/scissors.jpg", UriKind.Relative));
+            scissors.Source = new BitmapImage(new Uri(@"/Image/scissors.png", UriKind.Relative));
             scissors.MouseDown += new MouseButtonEventHandler(Processes);
             
             
             Image computer = new Image();
-            computer.Width = 100;
-            computer.Height = 100;
+            computer.Width = 150;
+            computer.Height = 150;
             computer.Name = "computer";
             computer.Margin = new Thickness(333,314,0,0);
             computer.HorizontalAlignment = HorizontalAlignment.Left;
             computer.VerticalAlignment = VerticalAlignment.Top;
             computer.Source = new BitmapImage(new Uri(@"/Image/computer.png", UriKind.Relative));
-            computer.MouseDown += new MouseButtonEventHandler(Processes);
 
             window.gridPanel.Children.Add(paper);
             window.gridPanel.Children.Add(rock);
@@ -162,10 +159,10 @@ namespace PapierKamienNozyce
             window.gridPanel.Children.Add(computer);
 
 
-            window.komputerText.Visibility = Visibility.Visible;
+            window.computerText.Visibility = Visibility.Visible;
             window.nickInfo.Content = $"Nick: {player.nick}";
             window.nickInfo.Visibility = Visibility.Visible;
-            window.koniec.Visibility = Visibility.Visible;
+            window.end.Visibility = Visibility.Visible;
 
             UpdateStats();
         }
@@ -177,22 +174,11 @@ namespace PapierKamienNozyce
             {
                 if(i.Name == "computer")
                 {
-                    //MessageBox.Show(computerChoice);      //checking if they are random image chosen from directory
-                    if(computerChoice != "paper")
-                    {
-                        i.Source = new BitmapImage(new Uri($@"/Image/{computerChoice}.jpg", UriKind.Relative));
-                        
-                    }
-                    else
-                    {
-                        i.Source = new BitmapImage(new Uri($@"/Image/{computerChoice}.png", UriKind.Relative));
-
-                    }
+                    i.Source = new BitmapImage(new Uri($@"/Image/{computerChoice}.png", UriKind.Relative));
                     CoverComputer();
                 }
             }
             Check((Image)sender);
-
         }
 
         public async void CoverComputer()
@@ -205,6 +191,7 @@ namespace PapierKamienNozyce
                     i.Source = new BitmapImage(new Uri(@"/Image/computer.png", UriKind.Relative));
                 }
             }
+
         }
 
         public bool AfterClick(object sender, RoutedEventArgs e)
@@ -213,28 +200,28 @@ namespace PapierKamienNozyce
             string theoryNick = window.nickInsert.Text;
             if (theoryNick == "")
             {
-                MessageBox.Show("Nie podano nicku");
+                MessageBox.Show("No name has been inserted");
                 window.isGameStarted = false;
 
             }
             else if (theoryNick.Length > 0 && theoryNick.Length <= 2)
             {
-                MessageBox.Show("Podano za krotka nazwe");
+                MessageBox.Show("The name is too short");
                 window.isGameStarted = false;
 
             }
             else if(theoryNick.Length > 2)
             {
                 Button button = (Button)sender;
-                if (button.Content.ToString() == "Sprawdz")
+                if (button.Content.ToString() == "Check the name")
                 {
-                    button.Content = "Zagraj";
-                    MessageBox.Show("Wszystko sie zgadza, zapraszam");
+                    button.Content = "Let's play";
+                    MessageBox.Show("Everything seems fine. Enjoy!");
                     window.nickInsert.IsEnabled = false;
                     window.isGameStarted = false;
                     
                 }
-                else if(button.Content.ToString() == "Zagraj")
+                else if(button.Content.ToString() == "Let's play")
                 {
                     player = new Player(theoryNick);
                     HideMenu();
@@ -245,6 +232,7 @@ namespace PapierKamienNozyce
                     window.lose.Visibility = Visibility.Visible;
                     window.draw.Visibility = Visibility.Visible;
                     window.maxScore.Visibility = Visibility.Visible;
+                    window.isGameStarted = true;
                     return true;
                 }
             }
@@ -304,7 +292,7 @@ namespace PapierKamienNozyce
             window.easyInfo.Visibility = Visibility.Visible;
             window.nickInsert.Visibility = Visibility.Visible;
             window.play.Visibility = Visibility.Visible;
-        }
+        }           //pokazuje menu
 
         public void VisibilityOff()         //makes images invisible
         {
@@ -319,19 +307,18 @@ namespace PapierKamienNozyce
             window.draw.Visibility = Visibility.Hidden;
             window.maxScore.Visibility = Visibility.Hidden;
             window.nickInfo.Visibility = Visibility.Hidden;
-            window.komputerText.Visibility = Visibility.Hidden;
-            window.koniec.Visibility = Visibility.Hidden;
+            window.computerText.Visibility = Visibility.Hidden;
+            window.end.Visibility = Visibility.Hidden;
         }
 
-        public void VisibilityOn()          
+        public void VisibilityOn()
         {
             foreach (Image i in window.gridPanel.Children.OfType<Image>())
             {
                 i.Visibility = Visibility.Visible;
             }
-            
-            
-        }
+
+        }       //nic nie wrobi, usuwa widocznosc wsyszstkiego
 
         public void UpdateStats()
         {
@@ -341,13 +328,12 @@ namespace PapierKamienNozyce
             window.win.Content = $"Win: {player.win}";
             window.maxScore.Content = $"maxScore: {player.maxScore}";
             window.score.Content = $"Score: {player.score}";
-        }
+        }  //ustawia wyniki
 
         public void Check(Image sender)
         {
             
             Image playerChoice = (Image)sender;
-            //MessageBox.Show($"PlayerChoice = {playerChoice.Name} and  computerLiteral = {computerChoice}");  //just to validate the code and check if programm runs correctly
             if (computerChoice.ToString() == playerChoice.Name.ToString())
             {
                 player.Draw();
@@ -388,7 +374,7 @@ namespace PapierKamienNozyce
                 MessageBox.Show("Something's wrong ;C");
             }
 
-        }
+        }       //check sprawdza po nacisnieciu nw
 
         public void Writer()
         {
@@ -431,6 +417,7 @@ namespace PapierKamienNozyce
         {
             VisibilityOff();
             ShowMenu();
+            window.isGameStarted = false;
             window.nickInsert.IsEnabled = true;
             window.play.Content = "Check the name";
             window.nickInsert.Text = "";
