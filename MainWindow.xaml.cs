@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.IO;
 
 namespace PapierKamienNozyce
 {
@@ -23,13 +17,13 @@ namespace PapierKamienNozyce
     public partial class MainWindow : Window
     {
         Game game;
-        public bool isGameStarted;
+        public bool hasGameStarted;
 
         public MainWindow()
         {
             InitializeComponent();
             game = new Game(this);
-            isGameStarted = false;
+            hasGameStarted = false;
             game.Reader();
 
 
@@ -38,9 +32,9 @@ namespace PapierKamienNozyce
         public void play_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            if (isGameStarted == false && (button.Content.ToString() == "Let's play" || button.Content.ToString() == "Check the name"))
+            if (hasGameStarted == false && (button.Content.ToString() == "Let's play" || button.Content.ToString() == "Check the name"))
             {
-                isGameStarted = true;
+                hasGameStarted = true;
                 if (game.AfterClick(sender, e))
                 {
                     game.setUpGame();
@@ -54,7 +48,7 @@ namespace PapierKamienNozyce
         public void endClick(object sender, RoutedEventArgs e)
         {
             game.EndGame(sender, e);
-        }        
+        }
     }
 
 
@@ -66,12 +60,12 @@ namespace PapierKamienNozyce
         public int draw = 0;
         public int lose = 0;
         public int score = 0;
-        
+
         public Player(string _nick)
         {
             nick = _nick;
         }
-        
+
         public void Win()
         {
             win++;
@@ -92,7 +86,7 @@ namespace PapierKamienNozyce
         public void SetScore()
         {
             score = (win - lose) * 3 + draw;
-            if( maxScore < score)
+            if (maxScore < score)
             {
                 maxScore = score;
             }
@@ -110,7 +104,7 @@ namespace PapierKamienNozyce
         {
             window = _window;
         }
-        
+
         public void setUpGame()     //that preps clickable options for player's turn 
         {
             Image paper = new Image();
@@ -121,7 +115,7 @@ namespace PapierKamienNozyce
             paper.HorizontalAlignment = HorizontalAlignment.Left;
             paper.VerticalAlignment = VerticalAlignment.Top;
             paper.Source = new BitmapImage(new Uri(@"/Image/paper.png", UriKind.Relative));
-            paper.MouseDown +=  new MouseButtonEventHandler(Processes);
+            paper.MouseDown += new MouseButtonEventHandler(Processes);
 
             Image rock = new Image();
             rock.Name = "rock";
@@ -142,13 +136,13 @@ namespace PapierKamienNozyce
             scissors.VerticalAlignment = VerticalAlignment.Top;
             scissors.Source = new BitmapImage(new Uri(@"/Image/scissors.png", UriKind.Relative));
             scissors.MouseDown += new MouseButtonEventHandler(Processes);
-            
-            
+
+
             Image computer = new Image();
             computer.Width = 150;
             computer.Height = 150;
             computer.Name = "computer";
-            computer.Margin = new Thickness(333,314,0,0);
+            computer.Margin = new Thickness(333, 314, 0, 0);
             computer.HorizontalAlignment = HorizontalAlignment.Left;
             computer.VerticalAlignment = VerticalAlignment.Top;
             computer.Source = new BitmapImage(new Uri(@"/Image/computer.png", UriKind.Relative));
@@ -170,9 +164,9 @@ namespace PapierKamienNozyce
         private void Processes(object sender, MouseButtonEventArgs e)
         {
             Randomize();
-            foreach(Image i in window.gridPanel.Children.OfType<Image>())
+            foreach (Image i in window.gridPanel.Children.OfType<Image>())
             {
-                if(i.Name == "computer")
+                if (i.Name == "computer")
                 {
                     i.Source = new BitmapImage(new Uri($@"/Image/{computerChoice}.png", UriKind.Relative));
                     CoverComputer();
@@ -196,21 +190,26 @@ namespace PapierKamienNozyce
 
         public bool AfterClick(object sender, RoutedEventArgs e)
         {
-
             string theoryNick = window.nickInsert.Text;
             if (theoryNick == "")
             {
                 MessageBox.Show("No name has been inserted");
-                window.isGameStarted = false;
+                window.hasGameStarted = false;
 
             }
             else if (theoryNick.Length > 0 && theoryNick.Length <= 2)
             {
                 MessageBox.Show("The name is too short");
-                window.isGameStarted = false;
+                window.hasGameStarted = false;
 
             }
-            else if(theoryNick.Length > 2)
+            else if (theoryNick.Contains(" "))
+            {
+                MessageBox.Show("The name can not contain space");
+                window.hasGameStarted = false;
+
+            }
+            else if (theoryNick.Length > 2)
             {
                 Button button = (Button)sender;
                 if (button.Content.ToString() == "Check the name")
@@ -218,10 +217,10 @@ namespace PapierKamienNozyce
                     button.Content = "Let's play";
                     MessageBox.Show("Everything seems fine. Enjoy!");
                     window.nickInsert.IsEnabled = false;
-                    window.isGameStarted = false;
-                    
+                    window.hasGameStarted = false;
+
                 }
-                else if(button.Content.ToString() == "Let's play")
+                else if (button.Content.ToString() == "Let's play")
                 {
                     player = new Player(theoryNick);
                     HideMenu();
@@ -232,7 +231,7 @@ namespace PapierKamienNozyce
                     window.lose.Visibility = Visibility.Visible;
                     window.draw.Visibility = Visibility.Visible;
                     window.maxScore.Visibility = Visibility.Visible;
-                    window.isGameStarted = true;
+                    window.hasGameStarted = true;
                     return true;
                 }
             }
@@ -292,9 +291,9 @@ namespace PapierKamienNozyce
             window.easyInfo.Visibility = Visibility.Visible;
             window.nickInsert.Visibility = Visibility.Visible;
             window.play.Visibility = Visibility.Visible;
-        }           //pokazuje menu
+        }
 
-        public void VisibilityOff()         //makes images invisible
+        public void VisibilityOff()
         {
             foreach (Image i in window.gridPanel.Children.OfType<Image>())
             {
@@ -318,7 +317,7 @@ namespace PapierKamienNozyce
                 i.Visibility = Visibility.Visible;
             }
 
-        }       //nic nie wrobi, usuwa widocznosc wsyszstkiego
+        }
 
         public void UpdateStats()
         {
@@ -328,18 +327,18 @@ namespace PapierKamienNozyce
             window.win.Content = $"Win: {player.win}";
             window.maxScore.Content = $"maxScore: {player.maxScore}";
             window.score.Content = $"Score: {player.score}";
-        }  //ustawia wyniki
+        }
 
         public void Check(Image sender)
         {
-            
+
             Image playerChoice = (Image)sender;
             if (computerChoice.ToString() == playerChoice.Name.ToString())
             {
                 player.Draw();
                 UpdateStats();
             }
-            else if(playerChoice.Name.ToString() == "paper" && computerChoice == "rock")
+            else if (playerChoice.Name.ToString() == "paper" && computerChoice == "rock")
             {
                 player.Win();
                 UpdateStats();
@@ -374,15 +373,15 @@ namespace PapierKamienNozyce
                 MessageBox.Show("Something's wrong ;C");
             }
 
-        }       //check sprawdza po nacisnieciu nw
+        }
 
         public void Writer()    //function writing scores from match into file
         {
             using (StreamWriter write = File.AppendText(@"scores\score.txt"))
             {
                 write.WriteLine($"{player.nick} {player.maxScore}");
-            } 
-        }   
+            }
+        }
 
         public void Reader()
         {
@@ -404,7 +403,7 @@ namespace PapierKamienNozyce
                 {
                     result += $"{s.nick} {s.score}\n";
                     maxi++;
-                    if(maxi == 10)
+                    if (maxi == 10)
                     {
                         break;
                     }
@@ -417,7 +416,7 @@ namespace PapierKamienNozyce
         {
             VisibilityOff();
             ShowMenu();
-            window.isGameStarted = false;
+            window.hasGameStarted = false;
             window.nickInsert.IsEnabled = true;
             window.play.Content = "Check the name";
             window.nickInsert.Text = "";
