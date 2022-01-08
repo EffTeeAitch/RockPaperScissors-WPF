@@ -376,13 +376,13 @@ namespace PapierKamienNozyce
 
         }       //check sprawdza po nacisnieciu nw
 
-        public void Writer()
+        public void Writer()    //function writing scores from match into file
         {
             using (StreamWriter write = File.AppendText(@"scores\score.txt"))
             {
                 write.WriteLine($"{player.nick} {player.maxScore}");
             } 
-        }
+        }   
 
         public void Reader()
         {
